@@ -8,7 +8,9 @@
 }
 
 body {
-    /* Cor de fundo provisória (quase preta) até a imagem ser adicionada */
+    background-size: cover;
+    background-position: center;
+    background-image: url('imgs/background-asenjo.png');
     background-color: #050505; 
     color: #ffffff;
     min-height: 100vh;
