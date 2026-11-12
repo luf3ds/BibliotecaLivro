@@ -1,92 +1,121 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.crudlivros.model.Livro" %>
-<!doctype html>
+<%@ page import="java.util.List" %>
+<!DOCTYPE html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Acervo Digital — Gerenciamento de Livros</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        <!-- Ligação para o arquivo CSS externo -->
-        <link rel="stylesheet" href="css/style.css" />
-    </head>
-    <body>
-        <canvas id="bg-canvas"></canvas>
-        <div class="gradient-overlay"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca - Adicionar Livro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <%
+        String msg = (String) request.getAttribute("mensagem");
 
-        <% 
-            String msg = (String) request.getAttribute("mensagem");
-            if (msg == null) msg = "Sistema pronto para busca ou novo cadastro.";
+        Livro l = (Livro) request.getAttribute("livroEncontrado");
+        boolean emEdicao = (l != null && l.getTitulo() != null && !l.getTitulo().isEmpty());
+        if (l == null) l = new Livro();
+
+        List<Livro> listaLivros = (List<Livro>) request.getAttribute("listaLivros");
+    %>
+
+    <div class="app-container">
+        <!-- Sidebar: Formulário de Adição -->
+        <aside class="sidebar painel-de-vidro">
+            <h2>Adicione um livro</h2>
+
+            <% if (msg != null && !msg.isEmpty()) { %>
+                <p style="font-size: 13px; color: rgba(255, 255, 255, 0.85); margin-bottom: 16px;">
+                    <%= msg %>
+                </p>
+            <% } %>
             
-            Livro l = (Livro) request.getAttribute("livroEncontrado");
-            if (l == null) l = new Livro();
-        %>
-
-        <main class="app-container">
-            <header class="app-header">
-                <div class="header-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <form id="formulario-livro" action="LivroServlet" method="POST" autocomplete="off">
+                <div class="grupo-input">
+                    <label for="campo-codigo">Código do Livro</label>
+                    <input type="text" id="campo-codigo" name="codigo" value="<%= l.getCodigo() != null ? l.getCodigo() : "" %>" required autocomplete="off">
                 </div>
-                <div>
-                    <h2>Acervo Bibliográfico</h2>
-                    <p class="subtitle">Gestão inteligente e consulta de títulos</p>
+                <div class="grupo-input">
+                    <label for="campo-titulo">Título</label>
+                    <input type="text" id="campo-titulo" name="titulo" value="<%= l.getTitulo() != null ? l.getTitulo() : "" %>" required autocomplete="off">
                 </div>
-            </header>
-
-            <div class="message" role="status">
-                <span><%= msg %></span>
-            </div>
-
-            <form class="crud-form" action="LivroServlet" method="POST" autocomplete="off">
-                <div class="form-group full-width">
-                    <label for="titulo">Título do Livro <span class="badge">Chave Primária</span></label>
-                    <div class="input-wrapper">
-                        <input type="text" id="titulo" name="titulo" value="<%= l.getTitulo() != null ? l.getTitulo() : "" %>" placeholder="Ex: Dom Casmurro" />
-                    </div>
+                <div class="grupo-input">
+                    <label for="campo-autor">Autor</label>
+                    <input type="text" id="campo-autor" name="autor" value="<%= l.getAutor() != null ? l.getAutor() : "" %>" autocomplete="off">
                 </div>
-
-                <div class="form-group full-width">
-                    <label for="autor">Autor</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="autor" name="autor" value="<%= l.getAutor() != null ? l.getAutor() : "" %>" placeholder="Ex: Machado de Assis" />
-                    </div>
+                <div class="grupo-input">
+                    <label for="campo-ano">Ano</label>
+                    <input type="text" id="campo-ano" name="ano" maxlength="4" value="<%= l.getAno() != null ? l.getAno() : "" %>" autocomplete="off">
                 </div>
-
-                <div class="form-group full-width">
-                    <label for="editora">Editora</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="editora" name="editora" value="<%= l.getEditora() != null ? l.getEditora() : "" %>" placeholder="Ex: Companhia das Letras" />
-                    </div>
+                <div class="grupo-input">
+                    <label for="campo-editora">Editora</label>
+                    <input type="text" id="campo-editora" name="editora" value="<%= l.getEditora() != null ? l.getEditora() : "" %>" autocomplete="off">
                 </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="ano">Ano</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="ano" name="ano" value="<%= l.getAno() != null ? l.getAno() : "" %>" placeholder="Ex: 1899" maxlength="4" />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="localizacao">Localização</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="localizacao" name="localizacao" value="<%= l.getLocalizacao() != null ? l.getLocalizacao() : "" %>" placeholder="Ex: Estante B3" />
-                        </div>
-                    </div>
+                <div class="grupo-input">
+                    <label for="campo-localizacao">Localização</label>
+                    <input type="text" id="campo-localizacao" name="localizacao" value="<%= l.getLocalizacao() != null ? l.getLocalizacao() : "" %>" autocomplete="off">
                 </div>
-
-                <div class="btn-group">
-                    <button type="submit" name="acao" value="consultar" class="btn btn-secondary">Consultar</button>
-                    <button type="submit" name="acao" value="inserir" class="btn btn-primary">Inserir</button>
-                    <button type="submit" name="acao" value="atualizar" class="btn btn-warning">Atualizar</button>
-                    <button type="submit" name="acao" value="deletar" class="btn btn-danger">Deletar</button>
+                
+                <div class="grupo-botoes">
+                    <button type="submit" name="acao" value="<%= emEdicao ? "atualizar" : "inserir" %>" class="botao botao-salvar">Salvar</button>
+                    <button type="button" class="botao botao-limpar" id="botao-limpar">Limpar</button>
                 </div>
             </form>
-        </main>
+        </aside>
 
-        <!-- Ligação para o arquivo JS externo -->
-        <script src="js/script.js"></script>
-    </body>
+        <!-- Área Principal: Busca e Cartões -->
+        <main class="area-principal">
+            <!-- Barra de Busca -->
+            <form action="LivroServlet" method="GET" class="barra-busca painel-de-vidro">
+                <input type="hidden" name="acao" value="consultar">
+                <span class="icone-busca">[Lupa]</span>
+                <input type="text" name="titulo" placeholder="Consultar..." class="input-busca">
+            </form>
+            
+            <!-- Grid onde os livros salvos vão aparecer -->
+            <div id="area-de-resultados" class="grid-livros">
+                <% if (listaLivros != null && !listaLivros.isEmpty()) {
+                    for (Livro item : listaLivros) { %>
+                        <div class="cartao-livro painel-de-vidro">
+                            <div class="cabecalho-cartao">
+                                <h3><%= item.getTitulo() %></h3>
+                                <span class="tag-codigo"><%= item.getCodigo() != null ? item.getCodigo() : "" %></span>
+                            </div>
+                            <div class="detalhes-cartao">
+                                <p>Autor: <%= item.getAutor() %></p>
+                                <p>Ano: <%= item.getAno() %></p>
+                                <p>Editora: <%= item.getEditora() %></p>
+                                <p>Localização: <%= item.getLocalizacao() %></p>
+                            </div>
+                            <div class="acoes-cartao">
+                                <a href="LivroServlet?acao=consultar&titulo=<%= item.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Editar]</span></a>
+                                <a href="LivroServlet?acao=deletar&titulo=<%= item.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Excluir]</span></a>
+                            </div>
+                        </div>
+                <%  }
+                } else if (emEdicao) { %>
+                    <div class="cartao-livro painel-de-vidro">
+                        <div class="cabecalho-cartao">
+                            <h3><%= l.getTitulo() %></h3>
+                            <span class="tag-codigo"><%= l.getCodigo() != null ? l.getCodigo() : "" %></span>
+                        </div>
+                        <div class="detalhes-cartao">
+                            <p>Autor: <%= l.getAutor() %></p>
+                            <p>Ano: <%= l.getAno() %></p>
+                            <p>Editora: <%= l.getEditora() %></p>
+                            <p>Localização: <%= l.getLocalizacao() %></p>
+                        </div>
+                        <div class="acoes-cartao">
+                            <a href="LivroServlet?acao=consultar&titulo=<%= l.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Editar]</span></a>
+                            <a href="LivroServlet?acao=deletar&titulo=<%= l.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Excluir]</span></a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
