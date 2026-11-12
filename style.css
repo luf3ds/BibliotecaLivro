@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    /* Cor de fundo provisória (quase preta) até a imagem ser adicionada */
+    background-color: #050505; 
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.app-container {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    height: calc(100vh - 48px);
+}
+
+/* --- CLASSE DO EFEITO DE VIDRO (Baseado no seu design) --- */
+.painel-de-vidro {
+    background: rgba(255, 255, 255, 0.08); /* Transparência suave */
+    backdrop-filter: blur(24px); /* Desfoque intenso para replicar o figma */
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Borda bem fina e discreta */
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* --- PAINEL LATERAL (Formulário) --- */
+.sidebar {
+    width: 380px;
+    padding: 32px 28px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+/* Inputs do Formulário */
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.grupo-input label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.grupo-input input {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Borda idêntica ao design */
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.grupo-input input:focus {
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Botões Salvar / Limpar */
+.grupo-botoes {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.botao {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.botao-salvar {
+    background-color: #e5e5e5;
+    color: #111111;
+}
+
+.botao-salvar:hover {
+    background-color: #ffffff;
+}
+
+.botao-limpar {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
+.botao-limpar:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- ÁREA PRINCIPAL --- */
+.area-principal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Barra de Pesquisa "Consultar..." */
+.barra-busca {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    height: 52px;
+    border-radius: 100px; /* Formato de pílula como no print */
+}
+
+.icone-busca {
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: 12px;
+    font-size: 14px;
+}
+
+.input-busca {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 15px;
+    outline: none;
+}
+
+.input-busca::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Container dos Cartões */
+.grid-livros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* Cartão do Livro Gerado */
+.cartao-livro {
+    width: 380px; /* Largura proporcional ao card do design */
+    padding: 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cabecalho-cartao {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.cabecalho-cartao h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.tag-codigo {
+    background-color: rgba(0, 0, 0, 0.4); /* Fundo escuro do badge "B1234" */
+    color: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.detalhes-cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detalhes-cartao p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7); /* Texto mais cinza/opaco igual ao print */
+    margin: 0;
+}
+
+/* Ações do Card (Editar/Excluir) */
+.acoes-cartao {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    gap: 12px;
+}
+
+.acoes-cartao span {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.acoes-cartao span:hover {
+    color: #ffffff;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca - Adicionar Livro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar: Formulário de Adição -->
+        <aside class="sidebar painel-de-vidro">
+            <h2>Adicione um livro</h2>
+            
+            <form id="formulario-livro">
+                <div class="grupo-input">
+                    <label for="campo-codigo">Código do Livro</label>
+                    <input type="text" id="campo-codigo" required autocomplete="off">
+                </div>
+                <div class="grupo-input">
+                    <label for="campo-titulo">Título</label>
+                    <input type="text" id="campo-titulo" required autocomplete="off">
+                </div>
+                <div class="grupo-input">
+                    <label for="campo-autor">Autor</label>
+                    <input type="text" id="campo-autor" autocomplete="off">
+                </div>
+                <div class="grupo-input">
+                    <label for="campo-ano">Ano</label>
+                    <input type="text" id="campo-ano" autocomplete="off">
+                </div>
+                <div class="grupo-input">
+                    <label for="campo-editora">Editora</label>
+                    <input type="text" id="campo-editora" autocomplete="off">
+                </div>
+                <div class="grupo-input">
+                    <label for="campo-localizacao">Localização</label>
+                    <input type="text" id="campo-localizacao" autocomplete="off">
+                </div>
+                
+                <div class="grupo-botoes">
+                    <button type="submit" class="botao botao-salvar">Salvar</button>
+                    <button type="button" class="botao botao-limpar" id="botao-limpar">Limpar</button>
+                </div>
+            </form>
+        </aside>
+
+        <!-- Área Principal: Busca e Cartões -->
+        <main class="area-principal">
+            <!-- Barra de Busca -->
+            <div class="barra-busca painel-de-vidro">
+                <span class="icone-busca">[Lupa]</span>
+                <input type="text" placeholder="Consultar..." class="input-busca">
+            </div>
+            
+            <!-- Grid onde os livros salvos vão aparecer -->
+            <div id="area-de-resultados" class="grid-livros">
+                <!-- O cartão do livro preenchido aparecerá aqui via JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
