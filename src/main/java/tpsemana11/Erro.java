@@ -1,19 +1,21 @@
 package tpsemana11;
 
-public class Erro {    
+public final class Erro {
     private static boolean erro;
     private static String mens;
 
-    public static void setErro(boolean _erro)
-    {
-        erro=_erro;
+    private Erro() {}
+
+    public static void setErro(boolean valor) {
+        erro = valor;
+        if (!valor) mens = null;
     }
-    public static void setErro(String _mens)
-    {
-        erro=true;
-        mens=_mens;
+
+    public static void setErro(String mensagem) {
+        erro = true;
+        mens = mensagem;
     }
-    public static boolean getErro() {return erro;}
-    public static String getMens() {return mens;}
-   
+
+    public static boolean getErro() { return erro; }
+    public static String getMens() { return mens; }
 }

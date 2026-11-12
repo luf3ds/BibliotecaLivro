@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca - Adicionar Livro</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/style.css">
 </head>
 <body>
     <%
@@ -31,7 +31,7 @@
                 </p>
             <% } %>
             
-            <form id="formulario-livro" action="LivroServlet" method="POST" autocomplete="off">
+            <form id="formulario-livro" action="<%= request.getContextPath() %>/LivroServlet" method="POST" autocomplete="off">
                 <div class="grupo-input">
                     <label for="campo-codigo">Código do Livro</label>
                     <input type="text" id="campo-codigo" name="codigo" value="<%= l.getCodigo() != null ? l.getCodigo() : "" %>" required autocomplete="off">
@@ -67,7 +67,7 @@
         <!-- Área Principal: Busca e Cartões -->
         <main class="area-principal">
             <!-- Barra de Busca -->
-            <form action="LivroServlet" method="GET" class="barra-busca painel-de-vidro">
+            <form action="<%= request.getContextPath() %>/LivroServlet" method="GET" class="barra-busca painel-de-vidro">
                 <input type="hidden" name="acao" value="consultar">
                 <span class="icone-busca">[Lupa]</span>
                 <input type="text" name="titulo" placeholder="Consultar..." class="input-busca">
@@ -83,14 +83,14 @@
                                 <span class="tag-codigo"><%= item.getCodigo() != null ? item.getCodigo() : "" %></span>
                             </div>
                             <div class="detalhes-cartao">
-                                <p>Autor: <%= item.getAutor() %></p>
-                                <p>Ano: <%= item.getAno() %></p>
-                                <p>Editora: <%= item.getEditora() %></p>
-                                <p>Localização: <%= item.getLocalizacao() %></p>
+                                <p>Autor: <%= item.getAutor() != null ? item.getAutor() : "" %></p>
+                                <p>Ano: <%= item.getAno() != null ? item.getAno() : "" %></p>
+                                <p>Editora: <%= item.getEditora() != null ? item.getEditora() : "" %></p>
+                                <p>Localização: <%= item.getLocalizacao() != null ? item.getLocalizacao() : "" %></p>
                             </div>
                             <div class="acoes-cartao">
-                                <a href="LivroServlet?acao=consultar&titulo=<%= item.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Editar]</span></a>
-                                <a href="LivroServlet?acao=deletar&titulo=<%= item.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Excluir]</span></a>
+                                <a href="<%= request.getContextPath() %>/LivroServlet?acao=consultar&titulo=<%= java.net.URLEncoder.encode(item.getTitulo(), "UTF-8") %>" style="color: inherit; text-decoration: none;"><span>[Editar]</span></a>
+                                <a href="<%= request.getContextPath() %>/LivroServlet?acao=deletar&titulo=<%= java.net.URLEncoder.encode(item.getTitulo(), "UTF-8") %>" style="color: inherit; text-decoration: none;"><span>[Excluir]</span></a>
                             </div>
                         </div>
                 <%  }
@@ -107,8 +107,8 @@
                             <p>Localização: <%= l.getLocalizacao() %></p>
                         </div>
                         <div class="acoes-cartao">
-                            <a href="LivroServlet?acao=consultar&titulo=<%= l.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Editar]</span></a>
-                            <a href="LivroServlet?acao=deletar&titulo=<%= l.getTitulo() %>" style="color: inherit; text-decoration: none;"><span>[Excluir]</span></a>
+                            <a href="<%= request.getContextPath() %>/LivroServlet?acao=consultar&titulo=<%= java.net.URLEncoder.encode(l.getTitulo(), "UTF-8") %>" style="color: inherit; text-decoration: none;"><span>[Editar]</span></a>
+                            <a href="<%= request.getContextPath() %>/LivroServlet?acao=deletar&titulo=<%= java.net.URLEncoder.encode(l.getTitulo(), "UTF-8") %>" style="color: inherit; text-decoration: none;"><span>[Excluir]</span></a>
                         </div>
                     </div>
                 <% } %>
@@ -116,6 +116,6 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="<%= request.getContextPath() %>/script.js"></script>
 </body>
 </html>

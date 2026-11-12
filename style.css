@@ -10,7 +10,7 @@
 body {
     background-size: cover;
     background-position: center;
-    background-image: url('imgs/background-asenjo.png');
+    background-image: url('imgs/background.png');
     background-color: #050505; 
     color: #ffffff;
     min-height: 100vh;
@@ -224,4 +224,18 @@ body {
 
 .acoes-cartao span:hover {
     color: #ffffff;
+}
+
+/* Ajustes para o conteúdo do CRUD */
+.app-container { min-height: calc(100vh - 48px); height: auto; }
+.sidebar { align-self: flex-start; }
+.area-principal { min-width: 0; }
+.grid-livros { overflow-y: auto; padding: 2px; }
+.cartao-livro { min-height: 190px; padding-bottom: 58px; }
+.acoes-cartao a { text-decoration: none; }
+@media (max-width: 900px) {
+    body { padding: 14px; }
+    .app-container { flex-direction: column; height: auto; }
+    .sidebar { width: 100%; }
+    .cartao-livro { width: 100%; }
 }

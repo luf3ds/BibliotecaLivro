@@ -1,189 +1,99 @@
 package tpsemana11;
 
-import java.lang.reflect.*;
+import com.crudlivros.model.Livro;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ALDAL {
+public final class ALDAL {
+    private static final String TABELA = "TabLivro";
+    private ALDAL() {}
 
-    public static void geraTabela(Object obj) {
+    public static void geraTabela(Livro livro) {
         Erro.setErro(false);
-        Field[] f = obj.getClass().getDeclaredFields();
-        String sql = "Create Table If Not Exists Tab" + obj.getClass().getSimpleName() + " (";
-
-        for (int i = 0; i < f.length; ++i) {
-            sql += f[i].getName() + " " + (f[i].getType().getSimpleName().equals("String") ? "varchar(60)" : f[i].getType());
-            if (i != (f.length - 1)) sql = sql + ", ";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABELA + " (" +
+                "codigo TEXT, titulo TEXT NOT NULL, autor TEXT, " +
+                "editora TEXT, ano TEXT, localizacao TEXT)";
+        try {
+            AFDAL.executar(sql);
+        } catch (SQLException e) {
+            Erro.setErro("Erro ao criar tabela: " + e.getMessage());
         }
-        sql += ")";
-        
-        AFDAL.conecta("livros.db");
-        AFDAL.executeSQL(sql);
-        AFDAL.desconecta();
     }
 
-    public static void set(Object obj) {
+    public static void set(Livro livro) {
         Erro.setErro(false);
-        Field[] f = obj.getClass().getDeclaredFields();
-        String sql = "Insert Into Tab" + obj.getClass().getSimpleName() + " (";
-        Method mtd;
-
-        for (int i = 0; i < f.length; ++i) {
-            sql += f[i].getName();
-            if (i != (f.length - 1)) sql = sql + ", ";
+        String sql = "INSERT INTO " + TABELA +
+                " (codigo, titulo, autor, editora, ano, localizacao) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            AFDAL.executar(sql, livro.getCodigo(), livro.getTitulo(), livro.getAutor(),
+                    livro.getEditora(), livro.getAno(), livro.getLocalizacao());
+        } catch (SQLException e) {
+            Erro.setErro("Erro ao inserir livro: " + e.getMessage());
         }
-        sql += ") values (";
-        for (int i = 0; i < f.length; ++i) {
-            try {
-                String aux = "get" + f[i].getName().substring(0, 1).toUpperCase() + f[i].getName().substring(1);
-                mtd = obj.getClass().getMethod(aux);
-                Object val = mtd.invoke(obj);
-                String valStr = (val != null) ? val.toString() : "";
-
-                if (f[i].getType().getSimpleName().equals("String"))  
-                    sql += "'" + valStr + "'";
-                else
-                    sql += valStr.equals("") ? "null" : valStr;
-            } catch (Exception e) {}
-            if (i != (f.length - 1)) sql = sql + ", ";
-        }
-        sql += ")";
-
-        AFDAL.conecta("livros.db");
-        AFDAL.executeSQL(sql);
-        AFDAL.desconecta();
     }
 
-    public static void delete(Object obj) {
+    public static void get(Livro livro) {
         Erro.setErro(false);
-        Field[] f = obj.getClass().getDeclaredFields();
-        String sql = "Delete from Tab" + obj.getClass().getSimpleName() + " where ";
-        Method mtd;
-        String aux1, aux2;
-        boolean flag = false;
-
-        for (int i = 0; i < f.length; ++i) {
-            try {
-                aux1 = "get" + f[i].getName().substring(0, 1).toUpperCase() + f[i].getName().substring(1);  
-                mtd = obj.getClass().getMethod(aux1);
-                Object res = mtd.invoke(obj);
-                aux2 = (res != null) ? res.toString() : "";
-
-                if (!aux2.trim().equals("")) {
-                    if (flag) sql += " and "; else flag = true;
-                    sql += f[i].getName() + " = ";
-                    if (f[i].getType().getSimpleName().equals("String"))  
-                        sql += "'" + aux2 + "'";
-                    else
-                        sql += aux2;
-                }
-            } catch (Exception e) {}
+        String sql = "SELECT codigo, titulo, autor, editora, ano, localizacao FROM " +
+                TABELA + " WHERE titulo = ? LIMIT 1";
+        try (Connection con = AFDAL.conecta();
+             ResultSet rs = AFDAL.consultar(con, sql, livro.getTitulo())) {
+            if (rs.next()) preencherLivro(livro, rs);
+            else Erro.setErro("Livro não localizado no acervo.");
+        } catch (SQLException e) {
+            Erro.setErro("Erro ao consultar livro: " + e.getMessage());
         }
-
-        if (!flag) {
-            Erro.setErro("Informe ao menos o Título para realizar a deleção.");
-            return;
-        }
-
-        AFDAL.conecta("livros.db");
-        AFDAL.executeSQL(sql);
-        AFDAL.desconecta();
     }
 
-    public static void get(Object obj) {
+    public static List<Livro> listar() {
         Erro.setErro(false);
-        Field[] f = obj.getClass().getDeclaredFields();
-        String sql = "Select * from Tab" + obj.getClass().getSimpleName() + " where ";
-        Method mtd;
-        String aux1, aux2;
-        boolean flag = false;
-
-        for (int i = 0; i < f.length; ++i) {
-            try {
-                aux1 = "get" + f[i].getName().substring(0, 1).toUpperCase() + f[i].getName().substring(1);  
-                mtd = obj.getClass().getMethod(aux1);
-                Object res = mtd.invoke(obj);
-                aux2 = (res != null) ? res.toString() : "";
-
-                if (!aux2.trim().equals("")) {
-                    if (flag) sql += " and "; else flag = true;
-                    sql += f[i].getName() + " = ";
-                    if (f[i].getType().getSimpleName().equals("String"))  
-                        sql += "'" + aux2 + "'";
-                    else
-                        sql += aux2;
-                }
-            } catch (Exception e) {}
+        List<Livro> livros = new ArrayList<>();
+        String sql = "SELECT codigo, titulo, autor, editora, ano, localizacao FROM " + TABELA + " ORDER BY titulo";
+        try (Connection con = AFDAL.conecta();
+             ResultSet rs = AFDAL.consultar(con, sql)) {
+            while (rs.next()) {
+                Livro livro = new Livro();
+                preencherLivro(livro, rs);
+                livros.add(livro);
+            }
+        } catch (SQLException e) {
+            Erro.setErro("Erro ao listar livros: " + e.getMessage());
         }
-
-        if (!flag) {
-            Erro.setErro("Informe ao menos o Título para realizar a consulta.");
-            return;
-        }
-
-        AFDAL.conecta("livros.db");
-        AFDAL.executeSelect(sql, obj);
-        AFDAL.desconecta();
+        return livros;
     }
 
-    public static void update(Object dados, Object chaves) {
+    public static void delete(Livro livro) {
         Erro.setErro(false);
-        Field[] f = dados.getClass().getDeclaredFields();
-        String sql = "Update Tab" + dados.getClass().getSimpleName() + " set ";
-        Method mtd;
-        String aux1, aux2;
-        boolean flag = false;
-
-        for (int i = 0; i < f.length; ++i) {
-            try {
-                aux1 = "get" + f[i].getName().substring(0, 1).toUpperCase() + f[i].getName().substring(1);  
-                mtd = dados.getClass().getMethod(aux1);
-                Object res = mtd.invoke(dados);
-                aux2 = (res != null) ? res.toString() : "";
-
-                if (!aux2.trim().equals("")) {
-                    if (flag) sql += ", "; else flag = true;
-                    sql += f[i].getName() + " = ";
-                    if (f[i].getType().getSimpleName().equals("String"))  
-                        sql += "'" + aux2 + "'";
-                    else
-                        sql += aux2;
-                }
-            } catch (Exception e) {}
+        try {
+            int linhas = AFDAL.executar("DELETE FROM " + TABELA + " WHERE titulo = ?", livro.getTitulo());
+            if (linhas == 0) Erro.setErro("Nenhum livro encontrado para excluir.");
+        } catch (SQLException e) {
+            Erro.setErro("Erro ao excluir livro: " + e.getMessage());
         }
+    }
 
-        if (!flag) {
-            Erro.setErro("Nenhum dado novo fornecido para atualização.");
-            return;
+    public static void update(Livro dados, Livro chave) {
+        Erro.setErro(false);
+        String sql = "UPDATE " + TABELA +
+                " SET codigo = ?, autor = ?, editora = ?, ano = ?, localizacao = ? WHERE titulo = ?";
+        try {
+            int linhas = AFDAL.executar(sql, dados.getCodigo(), dados.getAutor(), dados.getEditora(),
+                    dados.getAno(), dados.getLocalizacao(), chave.getTitulo());
+            if (linhas == 0) Erro.setErro("Nenhum livro encontrado para atualizar.");
+        } catch (SQLException e) {
+            Erro.setErro("Erro ao atualizar livro: " + e.getMessage());
         }
+    }
 
-        sql += " where ";
-        f = chaves.getClass().getDeclaredFields();
-        flag = false;
-
-        for (int i = 0; i < f.length; ++i) {
-            try {
-                aux1 = "get" + f[i].getName().substring(0, 1).toUpperCase() + f[i].getName().substring(1);  
-                mtd = chaves.getClass().getMethod(aux1);
-                Object res = mtd.invoke(chaves);
-                aux2 = (res != null) ? res.toString() : "";
-
-                if (!aux2.trim().equals("")) {
-                    if (flag) sql += " and "; else flag = true;
-                    sql += f[i].getName() + " = ";
-                    if (f[i].getType().getSimpleName().equals("String"))  
-                        sql += "'" + aux2 + "'";
-                    else
-                        sql += aux2;
-                }
-            } catch (Exception e) {}
-        }
-
-        if (!flag) {
-            Erro.setErro("Informe o Título para localizar o registro a atualizar.");
-            return;
-        }
-
-        AFDAL.conecta("livros.db");
-        AFDAL.executeSQL(sql);
-        AFDAL.desconecta();
+    private static void preencherLivro(Livro livro, ResultSet rs) throws SQLException {
+        livro.setCodigo(rs.getString("codigo"));
+        livro.setTitulo(rs.getString("titulo"));
+        livro.setAutor(rs.getString("autor"));
+        livro.setEditora(rs.getString("editora"));
+        livro.setAno(rs.getString("ano"));
+        livro.setLocalizacao(rs.getString("localizacao"));
     }
 }
