@@ -28,17 +28,31 @@ document.getElementById('formulario-livro').addEventListener('submit', function(
             </div>
             <div class="acoes-cartao">
                 <span>[Editar]</span>
-                <span>[Excluir]</span>
+                <span class="botao-excluir">[Excluir]</span>
             </div>
         </div>
     `;
 
-    // 4. Renderiza o card no painel da direita
+    // 4. Renderiza o card no painel da direita (alterado para +=)
     const espacoResultados = document.getElementById('area-de-resultados');
-    espacoResultados.innerHTML = modeloCartaoCriado; 
+    espacoResultados.innerHTML += modeloCartaoCriado; 
+
+    document.getElementById('formulario-livro').reset();
 });
 
-// Ação secundária: Limpar formulário
+
 document.getElementById('botao-limpar').addEventListener('click', function() {
     document.getElementById('formulario-livro').reset();
+});
+
+
+document.getElementById('area-de-resultados').addEventListener('click', function(evento) {
+    if (evento.target.classList.contains('botao-excluir')) {  
+        if(confirm("Tem a certeza que deseja excluir este livro?")) {
+            const cartaoLivro = evento.target.closest('.cartao-livro');
+            if (cartaoLivro) {
+                cartaoLivro.remove();
+            }
+        }
+    }
 });
